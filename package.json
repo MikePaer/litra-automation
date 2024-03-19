@@ -2,10 +2,7 @@
   "name": "litra-automation",
   "version": "1.0.0",
   "description": "Detects when webcam is in use to automatically turn on the Litra Glow light",
-  "main": "cam.js",
-  "scripts": {
-    "test": "camtest.js"
-  },
+  "main": "app.js",
   "author": "",
   "license": "ISC",
   "dependencies": {

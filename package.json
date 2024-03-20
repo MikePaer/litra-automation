@@ -6,7 +6,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "litra": "^4.5.0"
+    "litra": "^4.5.0",
+    "systray": "^1.0.5",
+    "trayicon": "^1.2.2"
   },
   "type": "module"
 }

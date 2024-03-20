@@ -1,8 +1,20 @@
 import { exec } from "child_process";
 import { findDevice, isOn, turnOn, turnOff } from "litra";
+import { create } from 'trayicon';
 
 // Initialize Litra device
 const device = findDevice();
+
+// Create systray icon (optional)
+create(function(tray) {
+  let trayOn = tray.item("Light on", () => turnOn(device));
+  let trayOff = tray.item("Light off", () => turnOff(device));
+  //power.add(tray.item("on"), tray.item("on"));
+  let separator = tray.separator();
+
+  let quit = tray.item("Quit", () => process.exit());
+  tray.setMenu(trayOn, trayOff, separator, quit);
+});
 
 // Registry path to check
 const registryPath = 'HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\webcam';

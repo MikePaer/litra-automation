@@ -1,16 +1,24 @@
 import { exec } from "child_process";
 import { findDevice, isOn, turnOn, turnOff, toggle, setBrightnessPercentage, setTemperatureInKelvin } from "litra";
 import { create } from 'trayicon';
+import { readFileSync } from 'fs';
 
 let cameraDetectionEnabled = true;
 createSysTrayMenu();
 
 // Create systray icon (optional)
+
+const iconFileOn = readFileSync('iconOn.png');
+const iconFileOff = readFileSync('iconOff.png');
+
 function createSysTrayMenu() {
     create(function (tray) {
 
         // General tray properties
         tray.setTitle("Litra Light Tool");
+
+        let iconFile = cameraDetectionEnabled ? iconFileOn : iconFileOff;
+        tray.setIcon(iconFile);
 
         let cameraDetectionMenuItem;
         cameraDetectionMenuItem = tray.item("Camera detection", {

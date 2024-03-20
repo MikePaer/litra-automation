@@ -13,58 +13,51 @@ function createSysTrayMenu() {
         tray.setTitle("Litra Light Tool");
 
         let cameraDetectionMenuItem;
-        let cameraDetectionMenuItemLabel;
-        if (cameraDetectionEnabled) {
-            cameraDetectionMenuItemLabel = "Disable camera detection";
-        }
-        else {
-            cameraDetectionMenuItemLabel = "Enable camera detection";
-        }
-        "Turn off camera detection";
+        cameraDetectionMenuItem = tray.item("Camera detection", {
+            checked: cameraDetectionEnabled, bold: cameraDetectionEnabled, action: () => {
+                cameraDetectionEnabled = !cameraDetectionEnabled;
 
-        cameraDetectionMenuItem = tray.item(cameraDetectionMenuItemLabel, () => {
-            cameraDetectionEnabled = !cameraDetectionEnabled;
-
-            // So now if the detection is enabled...
-            if(cameraDetectionEnabled) {
-                main = getSetInterval();
+                // So now if the detection is enabled...
+                if (cameraDetectionEnabled) {
+                    console.log("Creating loop");
+                    main = createMainLoop();
+                }
+                else {
+                    console.log("Clearing loop");
+                    clearInterval(main);
+                }
+                tray.kill();
+                createSysTrayMenu();
             }
-            else {
-                clearInterval(main);
-            }
-            tray.kill();
-            createSysTrayMenu();
         });
+
 
         let toggleMenuItem = tray.item("Toggle light", () => toggleLight());
 
-        // let trayOn = tray.item("Light on", () => turnOnLight());
-        // let trayOff = tray.item("Light off", () => turnOffLight());
-        //power.add(tray.item("on"), tray.item("on"));
         let separatorMenuItem = tray.separator();
 
-        let closeMenuItem = tray.item("Close", () => process.exit());
+        let exitMenuItem = tray.item("Exit", () => process.exit());
 
-        tray.setMenu(toggleMenuItem, separatorMenuItem, cameraDetectionMenuItem, separatorMenuItem, closeMenuItem);
+        tray.setMenu(toggleMenuItem, separatorMenuItem, cameraDetectionMenuItem, separatorMenuItem, exitMenuItem);
     });
 }
 
-function getSetInterval() {
+function createMainLoop() {
     return setInterval(() => {
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing registry query: ${error.message}`);
                 return;
             }
-    
+
             //console.log(stdout);
-    
+
             // Split the output by lines
             const lines = stdout.split('\n');
-    
+
             // Check each line for the value
             let inUse = false;
-    
+
             for (const line of lines) {
                 //console.log("Line " + line);
                 if (line.includes('LastUsedTimeStop')) {
@@ -76,7 +69,7 @@ function getSetInterval() {
                     }
                 }
             }
-    
+
             // Print the result
             if (inUse != lastInUse) {
                 if (inUse) {
@@ -88,15 +81,15 @@ function getSetInterval() {
                     turnOffLight();
                 }
             }
-    
+
             lastInUse = inUse;
-    
+
         });
-    
+
     }, 1500);
 }
 
-let main = getSetInterval();
+let main = createMainLoop();
 
 // Registry path to check
 const registryPath = 'HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\webcam';

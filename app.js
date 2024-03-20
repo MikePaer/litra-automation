@@ -1,5 +1,5 @@
 import { exec } from "child_process";
-import { findDevice, isOn, turnOn, turnOff, toggle } from "litra";
+import { findDevice, isOn, turnOn, turnOff, toggle, setBrightnessPercentage, setTemperatureInKelvin } from "litra";
 import { create } from 'trayicon';
 
 let cameraDetectionEnabled = true;
@@ -31,6 +31,25 @@ function createSysTrayMenu() {
             }
         });
 
+        let temperatureParentMenuItem = tray.item("Color temperature");
+        temperatureParentMenuItem.add(tray.item("2700K", () => setTemp(2700)));
+        temperatureParentMenuItem.add(tray.item("3000K", () => setTemp(3000)));
+        temperatureParentMenuItem.add(tray.item("3300K", () => setTemp(3300)));
+        temperatureParentMenuItem.add(tray.item("3600K", () => setTemp(3600)));
+        temperatureParentMenuItem.add(tray.item("4000K", () => setTemp(4000)));
+        temperatureParentMenuItem.add(tray.item("5000K", () => setTemp(5000)));
+        temperatureParentMenuItem.add(tray.item("6500K", () => setTemp(6500)));
+
+        let brightnessPercentMenuItem = tray.item("Brightness");
+        brightnessPercentMenuItem.add(tray.item("20%", () => setBrightnessPercent(20)));
+        brightnessPercentMenuItem.add(tray.item("30%", () => setBrightnessPercent(30)));
+        brightnessPercentMenuItem.add(tray.item("40%", () => setBrightnessPercent(40)));
+        brightnessPercentMenuItem.add(tray.item("50%", () => setBrightnessPercent(50)));
+        brightnessPercentMenuItem.add(tray.item("60%", () => setBrightnessPercent(60)));
+        brightnessPercentMenuItem.add(tray.item("70%", () => setBrightnessPercent(70)));
+        brightnessPercentMenuItem.add(tray.item("80%", () => setBrightnessPercent(80)));
+        brightnessPercentMenuItem.add(tray.item("90%", () => setBrightnessPercent(90)));
+        brightnessPercentMenuItem.add(tray.item("100%", () => setBrightnessPercent(100)));
 
         let toggleMenuItem = tray.item("Toggle light", () => toggleLight());
 
@@ -38,7 +57,7 @@ function createSysTrayMenu() {
 
         let exitMenuItem = tray.item("Exit", () => process.exit());
 
-        tray.setMenu(toggleMenuItem, separatorMenuItem, cameraDetectionMenuItem, separatorMenuItem, exitMenuItem);
+        tray.setMenu(toggleMenuItem, separatorMenuItem, temperatureParentMenuItem, brightnessPercentMenuItem, separatorMenuItem, cameraDetectionMenuItem, separatorMenuItem, exitMenuItem);
     });
 }
 
@@ -117,4 +136,17 @@ function toggleLight() {
     const device = findDevice();
     console.log('\Toggling Litra.');
     toggle(device);
+}
+
+// Note - there is no safety to this API. It should really check allowed values, but given arbitrary input is not allowed, no worries.
+function setTemp(kelvin) {
+    const device = findDevice();
+    console.log("\tSetting color temp: ", kelvin);
+    setTemperatureInKelvin(device, kelvin);
+}
+
+function setBrightnessPercent(percent) {
+    const device = findDevice();
+    console.log("\tSetting brightness percent: ", percent)
+    setBrightnessPercentage(device, percent);
 }

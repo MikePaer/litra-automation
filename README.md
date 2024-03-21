@@ -1,9 +1,20 @@
-# Litra-Automation
-Simple node.js program that:
-1. Checks for active webcam every 1.5 seconds (via registry trick, see appendix)
-2. When camera becomes active, it activates the connected Litra Glow light (using the [litra module](https://github.com/timrogers/litra)https://github.com/timrogers/litra)). When camera becomes active, it turns off the Litra Glow.
+# Features
+**⭐ Automatically toggle on/off your Logitech Litra USB device when your webcam is in use.** Works for any app, like Teams, Zoom, OBS, etc.
 
-It also creates a SysTray icon with manual controls for toggling the light, setting brightness, color temperature, and disabling the automation feature described above.
+![Demo of Litra camera detection automation](readme-pictures/demo.gif)
+
+I put this together because I was too lazy to manually turn the light on and off with every conference call. 
+
+**⭐ Control the Litra color temperature, brightness, and manual on/off via the systray icon**
+
+![Systray screenshot showing options Toggle Light, Color Temp, Brightness, and Camera Detection options](readme-pictures/image.png)
+
+
+# Requirements
+* Windows PC (tested on Windows 11). This will not work on Mac or other platforms.
+* [Node.js](https://nodejs.org/en/download) installed on PC with node.exe as part of your %PATH% variable (this happens by default when installing node)
+
+> Note: you do NOT need the Logitech Litra software installed for this to work.
 
 # Installing
 1. `git clone https://github.com/mikepaer/litra-automation`
@@ -11,11 +22,19 @@ It also creates a SysTray icon with manual controls for toggling the light, sett
 3. `npm install`
 
 ## Running
-This application can be run 'windowed' (cmd prompt always visible on taskbar IN ADDITION TO the systray icon, showing logging messages in real time), or **windowless** (no cmd prompt, just the systray icon)
+Run `launcher-windowless.vbs` to start the program. 
+> Note: you can start the program automatically at system boot by creating a shortcut to `launcher-windowless.vbs` and putting it in your `Startup` folder.
 
-Running with cmd prompt: `node app`
+All `launcher-windowless.vbs` does is run the node script (`node app.js`) in a way that suppresses the command prompt.
 
-Running windowlessly: `launcher-windowless.vbs`
+> ❗ Important note: the first time you run this script, you may be prompted to install .NET framework. The app will crash without it. Accept the prompt and install it, then re-run the app. This is necessary for the systray aspect of the app.
 
-## Autostart
-Create a shortcut to `launcher-windowless.vbs` and place it in the `Startup` folder.
+# How this works
+### Detecting camera use
+Windows records when your webcam starts/ends use on a per-app basis to the registry (`HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam\*`). When the `LastUsedTimestamp` QWORD value is set to `0x0`, that implies the camera is in use.
+
+This app simply polls the registry every 1.5s to see if any `LastUsedTimestamp` is `0x0` and infers that the webcam is in use. When `LastUsedTimestamp` changes to anything else, it infers the webcam is no longer in use. 
+
+### Other libraries in use
+* Interfacing with the Litra light: https://github.com/timrogers/litra
+* Creating a systray icon and menu: https://github.com/zaaack/node-systray

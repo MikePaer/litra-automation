@@ -3,11 +3,9 @@
 
 ![Demo of Litra camera detection automation](readme-pictures/demo.gif)
 
-I put this together because I was too lazy to manually turn the light on and off with every conference call. 
+**⭐ Control the Litra color temperature, brightness, and manual on/off via the systray icon.** You can also disable the automatic camera detection feature if you'd like.
 
-**⭐ Control the Litra color temperature, brightness, and manual on/off via the systray icon**
-
-![Systray screenshot showing options Toggle Light, Color Temp, Brightness, and Camera Detection options](readme-pictures/image.png)
+![Systray screenshot showing options Toggle Light, Color Temp, Brightness, and Camera Detection options](readme-pictures/systray.png)
 
 
 # Requirements
